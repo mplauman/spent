@@ -10,6 +10,5 @@ server.listen(config.port, () => {
 });
 
 const render = (res, pageId) => {
-    console.info('rendering', pageId);
     res.render(pageId, { pageId });
 };

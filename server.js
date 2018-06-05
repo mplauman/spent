@@ -10,5 +10,5 @@ server.listen(config.port, () => {
 });
 
 const render = (res, pageId) => {
-    res.render(pageId, { pageId });
+    res.render('index', { pageId });
 };

@@ -1,21 +1,12 @@
 import React from 'react';
 
-import DefaultState from './DefaultState';
+import Dashboard from './Dashboard';
+import Expenses from './Expenses';
 import MenuBar from './MenuBar';
-import NewState from './NewState';
+import Settings from './Settings';
+import Sprints from './Sprints';
 
 class App extends React.Component {
-  switchToNewState = () => {
-    this.setState({
-      child: <NewState onStateClick={this.switchToDefaultState} />
-    });
-  }
-
-  switchToDefaultState = () => {
-    this.setState({
-      child: <DefaultState onStateClick={this.switchToNewState} />
-    });
-  }
 
   startSprint = () => {
     console.info('start a new sprint');
@@ -44,23 +35,31 @@ class App extends React.Component {
   }
 
   viewDashboard = () => {
-    console.info('home clicked');
+    this.setState({
+      child: <Dashboard />
+    });
   }
 
   viewSprints = () => {
-    console.info('view sprints');
+    this.setState({
+      child: <Sprints />
+    });
   }
 
   viewExpenses = () => {
-    console.info('view expenses');
+    this.setState({
+      child: <Expenses />
+    });
   }
 
   viewSettings = () => {
-    console.info('view settings');
+    this.setState({
+      child: <Settings />
+    });
   }
 
   state = {
-    child: <DefaultState onStateClick={this.switchToNewState} />,
+    child: <Dashboard />,
     loggedIn: false
   };
 

@@ -29,21 +29,39 @@ class App extends React.Component {
     console.info('add income');
   }
 
+  logIn = () => {
+    console.info('logging in');
+    this.setState({
+      loggedIn: true
+    });
+  }
+
+  logOut = () => {
+    console.info('logging out');
+    this.setState({
+      loggedIn: false
+    });
+  }
+
   state = {
-    child: <DefaultState onStateClick={this.switchToNewState} />
+    child: <DefaultState onStateClick={this.switchToNewState} />,
+    loggedIn: false
   };
 
   render() {
     return (
       <div>
         <MenuBar
+          loggedIn={this.state.loggedIn}
           startSprint={this.startSprint}
           addExpense={this.addExpense}
           addIncome={this.addIncome}
+          logIn={this.logIn}
+          logOut={this.logOut}
         />
 
         {this.state.child}
-        
+
       </div>
     );
   }

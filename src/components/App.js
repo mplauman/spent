@@ -43,6 +43,22 @@ class App extends React.Component {
     });
   }
 
+  viewDashboard = () => {
+    console.info('home clicked');
+  }
+
+  viewSprints = () => {
+    console.info('view sprints');
+  }
+
+  viewExpenses = () => {
+    console.info('view expenses');
+  }
+
+  viewSettings = () => {
+    console.info('view settings');
+  }
+
   state = {
     child: <DefaultState onStateClick={this.switchToNewState} />,
     loggedIn: false
@@ -58,6 +74,10 @@ class App extends React.Component {
           addIncome={this.addIncome}
           logIn={this.logIn}
           logOut={this.logOut}
+          viewDashboard={this.viewDashboard}
+          viewSprints={this.viewSprints}
+          viewExpenses={this.viewExpenses}
+          viewSettings={this.viewSettings}
         />
 
         {this.state.child}

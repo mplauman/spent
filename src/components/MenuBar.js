@@ -14,15 +14,15 @@ class MenuBar extends React.Component {
       <Navbar collapseOnSelect>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href='#home'>Spent</a>
+            <a onClick={this.props.viewDashboard} href='#'>Spent</a>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>
-            <NavItem eventKey={1} href='#'>Sprints</NavItem>
-            <NavItem eventKey={2} href='#'>Expenses</NavItem>
-            <NavItem eventKey={3} href='#'>Settings</NavItem>
+            <NavItem eventKey={1} onClick={this.props.viewSprints} href='#'>Sprints</NavItem>
+            <NavItem eventKey={2} onClick={this.props.viewExpenses} href='#'>Expenses</NavItem>
+            <NavItem eventKey={3} onClick={this.props.viewSettings} href='#'>Settings</NavItem>
             <NavDropdown eventKey={4} title='Go' id='basic-nav-dropdown'>
               <MenuItem eventKey={4.1} onClick={this.props.startSprint}>Start a sprint</MenuItem>
               <MenuItem eventKey={4.2} onClick={this.props.addExpense}>Add an expense</MenuItem>
@@ -43,7 +43,12 @@ MenuBar.propTypes = {
   addExpense: PropTypes.func.isRequired,
   addIncome: PropTypes.func.isRequired,
   logIn: PropTypes.func.isRequired,
-  logOut: PropTypes.func.isRequired
+  logOut: PropTypes.func.isRequired,
+
+  viewDashboard: PropTypes.func.isRequired,
+  viewSprints: PropTypes.func.isRequired,
+  viewExpenses: PropTypes.func.isRequired,
+  viewSettings: PropTypes.func.isRequired
 };
 
 export default MenuBar;

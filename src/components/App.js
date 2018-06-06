@@ -17,6 +17,18 @@ class App extends React.Component {
     });
   }
 
+  startSprint = () => {
+    console.info('start a new sprint');
+  }
+
+  addExpense = () => {
+    console.info('add an expense');
+  }
+
+  addIncome = () => {
+    console.info('add income');
+  }
+
   state = {
     child: <DefaultState onStateClick={this.switchToNewState} />
   };
@@ -24,8 +36,14 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <MenuBar />
+        <MenuBar
+          startSprint={this.startSprint}
+          addExpense={this.addExpense}
+          addIncome={this.addIncome}
+        />
+
         {this.state.child}
+        
       </div>
     );
   }

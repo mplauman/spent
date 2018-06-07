@@ -6,6 +6,13 @@ import MenuBar from './MenuBar';
 import Settings from './Settings';
 import Sprints from './Sprints';
 
+const Views = Object.freeze({
+  dashboard: {},
+  expenses: {},
+  settings: {},
+  sprints: {}
+});
+
 class App extends React.Component {
 
   startSprint = () => {
@@ -34,36 +41,40 @@ class App extends React.Component {
     });
   }
 
-  viewDashboard = () => {
+  setView = (view) => {
     this.setState({
-      child: <Dashboard />
-    });
-  }
-
-  viewSprints = () => {
-    this.setState({
-      child: <Sprints />
-    });
-  }
-
-  viewExpenses = () => {
-    this.setState({
-      child: <Expenses />
-    });
-  }
-
-  viewSettings = () => {
-    this.setState({
-      child: <Settings />
+      view
     });
   }
 
   state = {
-    child: <Dashboard />,
+    view: Views.dashboard,
     loggedIn: false
   };
 
   render() {
+    let view = null;
+    switch (this.state.view) {
+    case Views.dashboard:
+      view = (<Dashboard loggedIn={this.state.loggedIn}/>);
+      break;
+
+    case Views.expenses:
+      view = (<Expenses/>);
+      break;
+
+    case Views.settings:
+      view = (<Settings/>);
+      break;
+
+    case Views.sprints:
+      view = (<Sprints/>);
+      break;
+
+    default:
+      throw 'unexpected view ' + this.state.view;
+    }
+
     return (
       <div>
         <MenuBar
@@ -73,14 +84,13 @@ class App extends React.Component {
           addIncome={this.addIncome}
           logIn={this.logIn}
           logOut={this.logOut}
-          viewDashboard={this.viewDashboard}
-          viewSprints={this.viewSprints}
-          viewExpenses={this.viewExpenses}
-          viewSettings={this.viewSettings}
+          viewDashboard={() => this.setView(Views.dashboard)}
+          viewSprints={() => this.setView(Views.sprints)}
+          viewExpenses={() => this.setView(Views.expenses)}
+          viewSettings={() => this.setView(Views.settings)}
         />
 
-        {this.state.child}
-
+        {view}
       </div>
     );
   }

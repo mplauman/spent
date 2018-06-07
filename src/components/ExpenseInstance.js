@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 class ExpenseInstance extends React.Component {
   render() {
     return (
-      <div className='expenseInstance'>
-        <div className='expenseDate'>{this.props.date}</div>
-        <div className='expenseValue'>{this.props.value}</div>
-        <div className='expenseName'>{this.props.name}</div>
-      </div>
+      <tr>
+        <td width='10%'>{this.props.date}</td>
+        <td width='10%'>{this.props.value}</td>
+        <td width='80%'>{this.props.name}</td>
+      </tr>
     );
   }
 }

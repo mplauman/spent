@@ -6,18 +6,20 @@ import ExpenseInstanceList from './ExpenseInstanceList';
 class SprintDetails extends React.Component {
   render() {
     return (
-      <div className='sprintDetails'>
-        <div>Opening Balance: {this.props.openingBalance}</div>
+      <div>
+        <div><strong>Opening Balance:</strong> {this.props.openingBalance}</div>
+
         <ExpenseInstanceList expenses={this.props.expenses} />
-        <div>Projected Closing: {this.props.closingBalance}</div>
-        <div>Revised Closing: {this.props.revisedClosing}</div>
+        
+        <div><strong>Projected Closing:</strong> {this.props.closingBalance}</div>
+        <div><strong>Revised Closing:</strong> {this.props.revisedClosing}</div>
       </div>
     );
   }
 }
 
 SprintDetails.propTypes = {
-  id: PropTypes.string.isRequired,
+  startDate: PropTypes.string.isRequired,
   expenses: PropTypes.array.isRequired,
   openingBalance: PropTypes.number.isRequired,
   closingBalance: PropTypes.number.isRequired,

@@ -4,16 +4,16 @@ import PropTypes from 'prop-types';
 class SprintSummary extends React.Component {
   render() {
     return (
-      <div>
-        <div>{this.props.id}</div>
-        <div>{this.props.closingBalance}</div>
-      </div>
+      <tr>
+        <td width='10%'>{this.props.endDate}</td>
+        <td width='90%'>{this.props.closingBalance}</td>
+      </tr>
     );
   }
 }
 
 SprintSummary.propTypes = {
-  id: PropTypes.string.isRequired,
+  endDate: PropTypes.string.isRequired,
   closingBalance: PropTypes.number.isRequired
 };
 

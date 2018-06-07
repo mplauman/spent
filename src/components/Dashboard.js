@@ -97,10 +97,16 @@ class Dashboard extends React.Component {
     }
 
     return (
-      <Well>
-        <SprintDetails {...this.state.currentSprint} />
-        <SprintSummaryList sprints={this.state.projectedSprints} />
-      </Well>
+      <div>
+        <Well>
+          <h1>Current Sprint <small>{this.state.currentSprint.startDate} - {this.state.currentSprint.endDate}</small></h1>
+          <SprintDetails {...this.state.currentSprint} />
+        </Well>
+        <Well>
+          <h1>Upcoming Sprints</h1>
+          <SprintSummaryList sprints={this.state.projectedSprints} />
+        </Well>
+      </div>
     );
   }
 }

@@ -3,7 +3,8 @@ import express from 'express';
 const router = express.Router();
 
 const currentSprint = {
-  id: '2018-06-05',
+  startDate: '2018-06-05',
+  endDate: '2018-06-21',
   openingBalance: 1.0,
   closingBalance: 100,
   revisedClosing: 200,
@@ -27,7 +28,8 @@ const sprints = [
 
 const projections = [
   {
-    id: '2018-06-19',
+    startDate: '2018-06-19',
+    endDate: '2018-07-03',
     openingBalance: 1.0,
     closingBalance: 100,
     revisedClosing: 200,
@@ -50,7 +52,8 @@ const projections = [
     ]
   },
   {
-    id: '2018-07-03',
+    startDate: '2018-07-03',
+    endDate: '2018-07-17',
     openingBalance: 1.0,
     closingBalance: 100,
     revisedClosing: 200,

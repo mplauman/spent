@@ -17,8 +17,47 @@ const currentSprint = {
     }
   ]
 };
+
 const sprints = [
   currentSprint
+];
+
+const projections = [
+  {
+    id: '2018-06-19',
+    expenses: [
+      {
+        name: 'hydro',
+        value: -100,
+        date: '2018-06-20'
+      },
+      {
+        name: 'payday',
+        value: 5000.00,
+        date: '2018-06-19'
+      },
+      {
+        name: 'daycare',
+        value: -1000.00,
+        date: '2018-06-21'
+      }
+    ]
+  },
+  {
+    id: '2018-07-03',
+    expenses: [
+      {
+        name: 'hydro',
+        value: -100,
+        date: '2018-07-04'
+      },
+      {
+        name: 'payday',
+        value: 5000,
+        date: '2018-07-03'
+      }
+    ]
+  }
 ];
 
 router.get('/sprints', (req, res) => {
@@ -26,6 +65,9 @@ router.get('/sprints', (req, res) => {
 });
 router.get('/sprints/current', (req, res) => {
   res.send(currentSprint);
+});
+router.get('/sprints/projections', (req, res) => {
+  res.send(projections);
 });
 router.get('/sprints/:sprintId', (req, res) => {
   res.send(req.params.sprintId);

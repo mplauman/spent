@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 import AddExpense from './AddExpense';
 import AddIncome from './AddIncome';
@@ -27,15 +28,33 @@ class App extends React.Component {
 
   logIn = () => {
     console.info('logging in');
-    this.setState({
-      loggedIn: true
-    });
+
+    let current = axios
+      .get('/api/sprints/current')
+      .then(resp => resp.data);
+
+    let projections = axios
+      .get('/api/sprints/projections')
+      .then(resp => resp.data);
+
+    Promise
+      .all([current, projections])
+      .then(results => {
+        this.setState({
+          loggedIn: true,
+          currentSprint: results[0],
+          projectedSprints: results[1]
+        });
+      })
+      .catch(console.error);
   }
 
   logOut = () => {
     console.info('logging out');
     this.setState({
-      loggedIn: false
+      loggedIn: false,
+      currentSprint: null,
+      projectedSprints: null
     });
   }
 
@@ -54,14 +73,22 @@ class App extends React.Component {
   state = {
     view: Views.dashboard,
     dialog: null,
-    loggedIn: false
+    loggedIn: false,
+    currentSprint: null,
+    projectedSprints: null
   };
 
   render() {
     let view = null;
     switch (this.state.view) {
     case Views.dashboard:
-      view = (<Dashboard loggedIn={this.state.loggedIn}/>);
+      view = (
+        <Dashboard
+          loggedIn={this.state.loggedIn}
+          currentSprint={this.state.currentSprint}
+          projectedSprints={this.state.projectedSprints}
+        />
+      );
       break;
 
     case Views.expenses:

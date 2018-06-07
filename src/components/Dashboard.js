@@ -1,67 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
+//import axios from 'axios';
 import {Jumbotron, Well} from 'react-bootstrap';
 
 import SprintDetails from './SprintDetails';
 import SprintSummaryList from './SprintSummaryList';
 
 class Dashboard extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      currentSprint: null,
-      projectedSprints: null
-    };
-  }
-
-  componentDidMount() {
-    this.loadData();
-  }
-
-  componentDidUpdate() {
-    this.loadData();
-  }
-
-  loadData = () => {
-    if (!this.props.loggedIn) {
-      console.info('not logged in, skipping API calls');
-
-      if (this.state.currentSprint || this.state.projectedSprints) {
-        console.info('clearing out current state');
-        this.setState({
-          currentSprint: null,
-          projectedSprints: null
-        });
-      }
-
-      return;
-    }
-
-    if (!this.state.currentSprint || !this.state.projectedSprints) {
-      console.info('fetching data');
-
-      let current = axios
-        .get('/api/sprints/current')
-        .then(resp => resp.data);
-
-      let projections = axios
-        .get('/api/sprints/projections')
-        .then(resp => resp.data);
-
-      Promise
-        .all([current, projections])
-        .then(results => {
-          this.setState({
-            currentSprint: results[0],
-            projectedSprints: results[1]
-          });
-        })
-        .catch(console.error);
-    }
-  }
-
   render() {
     if (!this.props.loggedIn) {
       return (
@@ -84,7 +29,7 @@ class Dashboard extends React.Component {
       );
     }
 
-    if (!this.state.currentSprint) {
+    if (!this.props.currentSprint) {
       return (
         <Jumbotron>
           <h2>You&#39;re almost started!</h2>
@@ -99,19 +44,21 @@ class Dashboard extends React.Component {
     return (
       <div>
         <Well>
-          <h1>Current Sprint <small>{this.state.currentSprint.startDate} - {this.state.currentSprint.endDate}</small></h1>
-          <SprintDetails {...this.state.currentSprint} />
+          <h1>Current Sprint <small>{this.props.currentSprint.startDate} - {this.props.currentSprint.endDate}</small></h1>
+          <SprintDetails {...this.props.currentSprint} />
         </Well>
         <Well>
           <h1>Upcoming Sprints</h1>
-          <SprintSummaryList sprints={this.state.projectedSprints} />
+          <SprintSummaryList sprints={this.props.projectedSprints} />
         </Well>
       </div>
     );
   }
 }
 Dashboard.propTypes = {
-  loggedIn: PropTypes.bool.isRequired
+  loggedIn: PropTypes.bool.isRequired,
+  currentSprint: PropTypes.object,
+  projectedSprints: PropTypes.array
 };
 
 export default Dashboard;

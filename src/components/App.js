@@ -1,5 +1,8 @@
 import React from 'react';
 
+import AddExpense from './AddExpense';
+import AddIncome from './AddIncome';
+import AddSprint from './AddSprint';
 import Dashboard from './Dashboard';
 import Expenses from './Expenses';
 import MenuBar from './MenuBar';
@@ -13,19 +16,14 @@ const Views = Object.freeze({
   sprints: {}
 });
 
+const Dialogs = Object.freeze({
+  none: {},
+  addSprint: {},
+  addExpense: {},
+  addIncome: {}
+});
+
 class App extends React.Component {
-
-  startSprint = () => {
-    console.info('start a new sprint');
-  }
-
-  addExpense = () => {
-    console.info('add an expense');
-  }
-
-  addIncome = () => {
-    console.info('add income');
-  }
 
   logIn = () => {
     console.info('logging in');
@@ -47,8 +45,15 @@ class App extends React.Component {
     });
   }
 
+  setDialog = (dialog) => {
+    this.setState({
+      dialog
+    });
+  }
+
   state = {
     view: Views.dashboard,
+    dialog: null,
     loggedIn: false
   };
 
@@ -75,13 +80,46 @@ class App extends React.Component {
       throw 'unexpected view ' + this.state.view;
     }
 
+    let dialog = null;
+    switch (this.state.dialog) {
+    case Dialogs.addSprint:
+      dialog = (
+        <AddSprint
+          onStart={() => this.setDialog(Dialogs.none)}
+          onCancel={() => this.setDialog(Dialogs.none)}
+        />
+      );
+      break;
+
+    case Dialogs.addExpense:
+      dialog = (
+        <AddExpense
+          onStart={() => this.setDialog(Dialogs.none)}
+          onCancel={() => this.setDialog(Dialogs.none)}
+        />
+      );
+      break;
+
+    case Dialogs.addIncome:
+      dialog = (
+        <AddIncome
+          onStart={() => this.setDialog(Dialogs.none)}
+          onCancel={() => this.setDialog(Dialogs.none)}
+        />
+      );
+      break;
+
+    default:
+      break;
+    }
+
     return (
       <div>
         <MenuBar
           loggedIn={this.state.loggedIn}
-          startSprint={this.startSprint}
-          addExpense={this.addExpense}
-          addIncome={this.addIncome}
+          startSprint={() => this.setDialog(Dialogs.addSprint)}
+          addExpense={() => this.setDialog(Dialogs.addExpense)}
+          addIncome={() => this.setDialog(Dialogs.addIncome)}
           logIn={this.logIn}
           logOut={this.logOut}
           viewDashboard={() => this.setView(Views.dashboard)}
@@ -89,7 +127,7 @@ class App extends React.Component {
           viewExpenses={() => this.setView(Views.expenses)}
           viewSettings={() => this.setView(Views.settings)}
         />
-
+        {dialog}
         {view}
       </div>
     );

@@ -4,6 +4,9 @@ const router = express.Router();
 
 const currentSprint = {
   id: '2018-06-05',
+  openingBalance: 1.0,
+  closingBalance: 100,
+  revisedClosing: 200,
   expenses: [
     {
       name: 'hydro',
@@ -25,6 +28,9 @@ const sprints = [
 const projections = [
   {
     id: '2018-06-19',
+    openingBalance: 1.0,
+    closingBalance: 100,
+    revisedClosing: 200,
     expenses: [
       {
         name: 'hydro',
@@ -45,6 +51,9 @@ const projections = [
   },
   {
     id: '2018-07-03',
+    openingBalance: 1.0,
+    closingBalance: 100,
+    revisedClosing: 200,
     expenses: [
       {
         name: 'hydro',

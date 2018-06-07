@@ -1,17 +1,31 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-class SprintSummaryList extends Component {
+import SprintSummary from './SprintSummary';
+
+class SprintSummaryList extends React.Component {
   render() {
     return (
-      <div className='sprintSummaryList'>
-        hello
+      <div>
+        {this.props.sprints
+          .sort((lhs, rhs) => {
+            if (lhs.id < rhs.id) {
+              return -1;
+            }
+            if (lhs.id > rhs.id) {
+              return 1;
+            }
+            return 0;
+          })
+          .map(sprint =>
+            <SprintSummary key={sprint.id} {...sprint} />
+          )}
       </div>
     );
   }
 }
 
-SprintSummaryList.props = {
+SprintSummaryList.propTypes = {
   sprints: PropTypes.array.isRequired
 };
 

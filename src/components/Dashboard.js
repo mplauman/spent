@@ -99,7 +99,7 @@ class Dashboard extends React.Component {
     return (
       <Well>
         <SprintDetails {...this.state.currentSprint} />
-        <SprintSummaryList sprints={this.state.projections} />
+        <SprintSummaryList sprints={this.state.projectedSprints} />
       </Well>
     );
   }

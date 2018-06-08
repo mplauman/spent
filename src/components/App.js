@@ -72,7 +72,7 @@ class App extends React.Component {
 
   state = {
     view: Views.dashboard,
-    dialog: null,
+    dialog: Dialogs.none,
     loggedIn: false,
     currentSprint: null,
     projectedSprints: null
@@ -114,6 +114,7 @@ class App extends React.Component {
         <AddSprint
           onStart={() => this.setDialog(Dialogs.none)}
           onCancel={() => this.setDialog(Dialogs.none)}
+          currentSprint={this.state.currentSprint}
         />
       );
       break;
@@ -136,8 +137,12 @@ class App extends React.Component {
       );
       break;
 
-    default:
+    case Dialogs.none:
+      dialog = null;
       break;
+
+    default:
+      throw 'unexpected dialog ' + this.state.dialog;
     }
 
     return (

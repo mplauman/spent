@@ -64,6 +64,7 @@ class AddSprint extends React.Component {
     this.handleStartDateChanged = this.handleStartDateChanged.bind(this);
     this.handleEndDateChanged = this.handleEndDateChanged.bind(this);
     this.handleOpeningBalanceChanged = this.handleOpeningBalanceChanged.bind(this);
+    this.startSprint = this.startSprint.bind(this);
   }
 
   handleStartDateChanged(event) {
@@ -81,6 +82,14 @@ class AddSprint extends React.Component {
   handleOpeningBalanceChanged(event) {
     this.setState({
       openingBalance: event.target.value
+    });
+  }
+
+  startSprint() {
+    this.props.onStart({
+      openingBalance: this.state.openingBalance,
+      startDate: this.state.startDate,
+      endDate: this.state.endDate
     });
   }
 
@@ -102,7 +111,7 @@ class AddSprint extends React.Component {
               <Col sm={10}>
                 <InputGroup>
                   <InputGroup.Addon>$</InputGroup.Addon>
-                  <FormControl type='number' value={this.state.openingBalance} step='0.01'/>
+                  <FormControl type='number' value={this.state.openingBalance} step='0.01' onChange={this.handleOpeningBalanceChanged}/>
                 </InputGroup>
               </Col>
             </FormGroup>
@@ -111,7 +120,7 @@ class AddSprint extends React.Component {
 
         <Modal.Footer>
           <Button onClick={this.props.onCancel}>Cancel</Button>
-          <Button bsStyle='primary' onClick={this.props.onStart}>Start</Button>
+          <Button bsStyle='primary' onClick={this.startSprint}>Start</Button>
         </Modal.Footer>
       </Modal.Dialog>
     );

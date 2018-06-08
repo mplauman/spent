@@ -70,6 +70,28 @@ class App extends React.Component {
     });
   }
 
+  startSprint = (prototype) => {
+    this.setState({
+      dialog: Dialogs.none
+    });
+
+    axios
+      .post('/api/sprints/current', prototype)
+      .then(resp => {
+        this.setState({
+          currentSprint: resp.data
+        });
+
+        return axios.get('/api/sprints/projections');
+      })
+      .then(resp => {
+        this.setState({
+          projectedSprints: resp.data
+        });
+      })
+      .catch(console.error);
+  }
+
   state = {
     view: Views.dashboard,
     dialog: Dialogs.none,
@@ -112,7 +134,7 @@ class App extends React.Component {
     case Dialogs.addSprint:
       dialog = (
         <AddSprint
-          onStart={() => this.setDialog(Dialogs.none)}
+          onStart={this.startSprint}
           onCancel={() => this.setDialog(Dialogs.none)}
           currentSprint={this.state.currentSprint}
         />

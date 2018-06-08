@@ -78,6 +78,20 @@ router.get('/sprints', (req, res) => {
 router.get('/sprints/current', (req, res) => {
   res.send(currentSprint);
 });
+router.post('/sprints/current', (req, res) => {
+  let prototype = req.body;
+
+  res.send({
+    startDate: prototype.startDate,
+    endDate: prototype.endDate,
+
+    openingBalance: prototype.openingBalance,
+    closingBalance: prototype.openingBalance,
+    revisedClosing: prototype.openingBalance,
+
+    expenses: []
+  });
+});
 router.get('/sprints/projections', (req, res) => {
   res.send(projections);
 });

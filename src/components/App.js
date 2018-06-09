@@ -92,11 +92,25 @@ class App extends React.Component {
   }
 
   addExpenses = (prototypes) => {
-    prototypes.map(console.info);
-
     this.setState({
       dialog: Dialogs.none
     });
+
+    axios
+      .post('/api/expenses', prototypes)
+      .then(() => {
+        const current = axios.get('/api/sprints/current');
+        const projections = axios.get('/api/sprints/projections');
+
+        return Promise.all([current, projections]);
+      })
+      .then(results => {
+        this.setState({
+          currentSprint: results[0].data,
+          projectedSprints: results[1].data
+        });
+      })
+      .catch(console.error);
   }
 
   state = {

@@ -72,6 +72,10 @@ const projections = [
   }
 ];
 
+const expensePrototypes = [
+
+];
+
 router.get('/sprints', (req, res) => {
   res.send(sprints);
 });
@@ -91,6 +95,11 @@ router.post('/sprints/current', (req, res) => {
 
     expenses: []
   });
+});
+router.post('/expenses', (req, res) => {
+  console.info(req.body);
+
+  res.send(expensePrototypes);
 });
 router.get('/sprints/projections', (req, res) => {
   res.send(projections);

@@ -1,23 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {InputGroup, Modal, Button, Form, FormGroup, Col, FormControl, ControlLabel} from 'react-bootstrap';
+import {Modal, Button, Form} from 'react-bootstrap';
 
 import DateFormControl from './DateFormControl';
 import MoneyFormControl from './MoneyFormControl';
-
-const dateToString = (d) => {
-  let year = ('' + d.getFullYear()).padStart(4, '0');
-  let month = ('' + (d.getMonth() + 1)).padStart(2, '0');
-  let day = ('' + d.getDate()).padStart(2, '0');
-
-  return year + '-' + month + '-' + day;
-};
-
-const dateFromString = (d) => {
-  let parts = d.split('-');
-
-  return new Date(parts[0], parts[1] - 1, parts[2]);
-};
+import Formatters from '../Formatters';
 
 class AddSprint extends React.Component {
 
@@ -27,7 +14,7 @@ class AddSprint extends React.Component {
     let startDate = new Date();
     let openingBalance = 0.0;
     if (props.currentSprint) {
-      startDate = dateFromString(props.currentSprint.endDate);
+      startDate = Formatters.dateFromString(props.currentSprint.endDate);
       startDate.setDate(startDate.getDate() + 1);
 
       openingBalance = props.currentSprint.revisedClosing;
@@ -37,8 +24,8 @@ class AddSprint extends React.Component {
     endDate.setDate(endDate.getDate() + 14);
 
     this.state = {
-      startDate: dateToString(startDate),
-      endDate: dateToString(endDate),
+      startDate: Formatters.dateToString(startDate),
+      endDate: Formatters.dateToString(endDate),
       openingBalance
     };
 

@@ -4,6 +4,7 @@ import {Modal, Button, Form, FormGroup, Col, FormControl, ControlLabel, Checkbox
 
 import DateFormControl from './DateFormControl';
 import MoneyFormControl from './MoneyFormControl';
+import Formatters from '../Formatters';
 
 class AddExpense extends React.Component {
   constructor(props) {
@@ -11,7 +12,7 @@ class AddExpense extends React.Component {
 
     this.state = {
       name: '',
-      start: '' + new Date(),
+      start: Formatters.dateToString(new Date(Date.now())),
       value: 0.0,
       count: 1,
       frequency: 'times',

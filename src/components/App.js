@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 
 import AddExpense from './AddExpense';
-import AddIncome from './AddIncome';
 import AddSprint from './AddSprint';
 import Dashboard from './Dashboard';
 import Expenses from './Expenses';
@@ -92,6 +91,14 @@ class App extends React.Component {
       .catch(console.error);
   }
 
+  addExpenses = (prototypes) => {
+    prototypes.map(console.info);
+
+    this.setState({
+      dialog: Dialogs.none
+    });
+  }
+
   state = {
     view: Views.dashboard,
     dialog: Dialogs.none,
@@ -144,19 +151,25 @@ class App extends React.Component {
     case Dialogs.addExpense:
       dialog = (
         <AddExpense
-          onStart={() => this.setDialog(Dialogs.none)}
+          title='New Expense'
+          isIncome={false}
+          onAdd={this.addExpenses}
           onCancel={() => this.setDialog(Dialogs.none)}
         />
       );
       break;
 
     case Dialogs.addIncome:
-      dialog = (
-        <AddIncome
-          onStart={() => this.setDialog(Dialogs.none)}
-          onCancel={() => this.setDialog(Dialogs.none)}
-        />
-      );
+      {
+        dialog = (
+          <AddExpense
+            title='New Income'
+            isIncome={true}
+            onAdd={this.addExpenses}
+            onCancel={() => this.setDialog(Dialogs.none)}
+          />
+        );
+      }
       break;
 
     case Dialogs.none:

@@ -2,27 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {InputGroup, Modal, Button, Form, FormGroup, Col, FormControl, ControlLabel} from 'react-bootstrap';
 
-class DateControl extends React.Component {
-  render() {
-
-    return (
-      <FormGroup controlId={this.props.controlId}>
-        <Col componentClass={ControlLabel} sm={2}>
-          {this.props.title}
-        </Col>
-        <Col sm={10}>
-          <FormControl type='date' value={this.props.value} onChange={this.props.onChange} />
-        </Col>
-      </FormGroup>
-    );
-  }
-}
-DateControl.propTypes = {
-  controlId: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired
-};
+import DateFormControl from './DateFormControl';
+import MoneyFormControl from './MoneyFormControl';
 
 const dateToString = (d) => {
   let year = ('' + d.getFullYear()).padStart(4, '0');
@@ -102,19 +83,9 @@ class AddSprint extends React.Component {
 
         <Modal.Body>
           <Form horizontal>
-            <DateControl controlId='startDate' title='Start Date' value={this.state.startDate} onChange={this.handleStartDateChanged} />
-            <DateControl controlId='endDate' title='End Date' value={this.state.endDate} onChange={this.handleEndDateChanged} />
-            <FormGroup controlId='openingBalance'>
-              <Col componentClass={ControlLabel} sm={2}>
-                Opening Balance
-              </Col>
-              <Col sm={10}>
-                <InputGroup>
-                  <InputGroup.Addon>$</InputGroup.Addon>
-                  <FormControl type='number' value={this.state.openingBalance} step='0.01' onChange={this.handleOpeningBalanceChanged}/>
-                </InputGroup>
-              </Col>
-            </FormGroup>
+            <DateFormControl controlId='startDate' title='Start Date' value={this.state.startDate} onChange={this.handleStartDateChanged} />
+            <DateFormControl controlId='endDate' title='End Date' value={this.state.endDate} onChange={this.handleEndDateChanged} />
+            <MoneyFormControl controlId='openingBalance' title='Opening Balance' value={this.state.openingBalance} onChange={this.handleOpeningBalanceChanged} />
           </Form>
         </Modal.Body>
 

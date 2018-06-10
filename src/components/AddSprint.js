@@ -21,7 +21,7 @@ class AddSprint extends React.Component {
     }
 
     let endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 14);
+    endDate.setDate(endDate.getDate() + 13);
 
     this.state = {
       startDate: Formatters.dateToString(startDate),

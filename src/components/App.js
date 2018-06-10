@@ -41,7 +41,7 @@ class App extends React.Component {
       .then(results => {
         this.setState({
           loggedIn: true,
-          currentSprint: results[0],
+          currentSprint: results[0] ? results[0] : null,
           projectedSprints: results[1]
         });
       })
@@ -106,7 +106,7 @@ class App extends React.Component {
       })
       .then(results => {
         this.setState({
-          currentSprint: results[0].data,
+          currentSprint: results[0].data ? results[0].data : null,
           projectedSprints: results[1].data
         });
       })

@@ -15,7 +15,7 @@ class AddExpense extends React.Component {
       start: Formatters.dateToString(new Date(Date.now())),
       value: 0.0,
       count: 1,
-      frequency: 'times',
+      frequency: 'once',
       prototypes: [],
       multiadd: false
     };
@@ -69,7 +69,7 @@ class AddExpense extends React.Component {
     const prototype = {
       name: this.state.name,
       value: this.state.value * (this.props.isIncome ? 1.0 : -1.0),
-      start: this.state.start,
+      startDate: this.state.start,
       count: this.state.count,
       frequency: this.state.frequency
     };
@@ -110,11 +110,11 @@ class AddExpense extends React.Component {
                 Frequecy
               </Col>
               <Col sm={3}>
-                <FormControl type='number' value={this.state.count} step='1' min='1' onChange={this.handleCountChanged}/>
+                <FormControl type='number' disabled={this.state.frequency == 'once'} value={this.state.count} step='1' min='1' onChange={this.handleCountChanged}/>
               </Col>
               <Col sm={7}>
                 <FormControl componentClass='select' value={this.state.frequency} onChange={this.handleFrequencyChanged}>
-                  <option value='times'>time(s)</option>
+                  <option value='once'>once</option>
                   <option value='days'>day(s)</option>
                   <option value='weeks'>week(s)</option>
                   <option value='months'>month(s)</option>

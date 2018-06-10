@@ -91,13 +91,15 @@ class App extends React.Component {
       .catch(console.error);
   }
 
-  addExpenses = (prototypes) => {
-    this.setState({
-      dialog: Dialogs.none
-    });
+  addExpenses = (prototype, addMore) => {
+    if (!addMore) {
+      this.setState({
+        dialog: Dialogs.none
+      });
+    }
 
     axios
-      .post('/api/expenses', prototypes)
+      .post('/api/expenses', [ prototype ])
       .then(() => {
         const current = axios.get('/api/sprints/current');
         const projections = axios.get('/api/sprints/projections');

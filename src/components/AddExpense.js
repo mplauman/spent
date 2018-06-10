@@ -16,7 +16,6 @@ class AddExpense extends React.Component {
       value: 0.0,
       count: 1,
       frequency: 'once',
-      prototypes: [],
       multiadd: false
     };
 
@@ -74,16 +73,7 @@ class AddExpense extends React.Component {
       frequency: this.state.frequency
     };
 
-    if (this.state.multiadd) {
-      this.setState(prevState => ({
-        name: '',
-        prototypes: [...prevState.prototypes, prototype]
-      }));
-
-      return;
-    }
-
-    this.props.onAdd([...this.state.prototypes, prototype]);
+    this.props.onAdd(prototype, this.state.multiadd);
   }
 
   render() {

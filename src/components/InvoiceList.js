@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Table} from 'react-bootstrap';
 
-import ExpenseInstance from './ExpenseInstance';
+import Invoice from './Invoice';
 
-class ExpenseInstanceList extends React.Component {
+class InvoiceList extends React.Component {
   render() {
     return (
       <Table striped bordered condensed hover>
         <tbody>
-          {this.props.expenses
+          {this.props.invoices
             .sort((lhs, rhs) => {
               if (lhs.date < rhs.date) {
                 return -1;
@@ -19,8 +19,8 @@ class ExpenseInstanceList extends React.Component {
               }
               return 0;
             })
-            .map(expense =>
-              <ExpenseInstance key={expense.name + expense.date} {...expense} />
+            .map(invoice =>
+              <Invoice key={invoice.name + invoice.date} {...invoice} />
             )}
         </tbody>
       </Table>
@@ -28,8 +28,8 @@ class ExpenseInstanceList extends React.Component {
   }
 }
 
-ExpenseInstanceList.propTypes = {
-  expenses: PropTypes.array.isRequired
+InvoiceList.propTypes = {
+  invoices: PropTypes.array.isRequired
 };
 
-export default ExpenseInstanceList;
+export default InvoiceList;

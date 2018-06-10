@@ -138,7 +138,7 @@ router.post('/sprints/current', (req, res) => {
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     openingBalance: req.body.openingBalance,
-    expenses: newInvoices,
+    invoices: newInvoices,
     closingBalance: closingBalance,
     revisedClosing: closingBalance
   };
@@ -159,14 +159,14 @@ router.post('/sprints/current', (req, res) => {
  * If any of the incoming invoice prototypes start in the current sprint
  * they will be instantiated and added to the sprint.
  */
-router.post('/expenses', (req, res) => {
+router.post('/invoices', (req, res) => {
   const sprint = currentSprint;
   if (sprint != null) {
     const {newInvoices, revisedPrototypes} = instantiateInvoices(sprint.startDate, sprint.endDate, req.body);
 
     // update the current sprint
     sprint.revisedClosing = newInvoices.reduce(accumulateInvoice, sprint.revisedClosing);
-    sprint.expenses = [...sprint.expenses, ...newInvoices];
+    sprint.invoices = [...sprint.invoices, ...newInvoices];
 
     invoicePrototypes = [...invoicePrototypes, ...revisedPrototypes];
   } else {
@@ -175,12 +175,12 @@ router.post('/expenses', (req, res) => {
 
   res.send(invoicePrototypes);
 });
-router.get('/expenses', (req, resp) => {
+router.get('/invoices', (req, resp) => {
   resp.send(invoicePrototypes);
 });
 
 /**
- * Roll forward through the expenses and calculate a few sprints.
+ * Roll forward through the invoices and calculate a few sprints.
  */
 router.get('/sprints/projections', (req, res) => {
   const projections = [];
@@ -202,7 +202,7 @@ router.get('/sprints/projections', (req, res) => {
     };
 
     const {newInvoices, revisedPrototypes} = instantiateInvoices(projected.startDate, projected.endDate, prevInvoicePrototypes);
-    projected.expenses = newInvoices;
+    projected.invoices = newInvoices;
     projected.closingBalance = newInvoices.reduce(accumulateInvoice, projected.openingBalance);
     projected.revisedClosing = projected.closingBalance;
 

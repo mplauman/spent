@@ -21,7 +21,7 @@ class MenuBar extends React.Component {
         <Navbar.Collapse>
           <Nav>
             <NavItem eventKey={1} onClick={this.props.viewSprints} href='#'>Sprints</NavItem>
-            <NavItem eventKey={2} onClick={this.props.viewExpenses} href='#'>Expenses</NavItem>
+            <NavItem eventKey={2} onClick={this.props.viewInvoices} href='#'>Invoices</NavItem>
             <NavItem eventKey={3} onClick={this.props.viewSettings} href='#'>Settings</NavItem>
             <NavDropdown eventKey={4} title='Go' id='basic-nav-dropdown'>
               <MenuItem eventKey={4.1} onClick={this.props.startSprint}>Start a sprint</MenuItem>
@@ -47,7 +47,7 @@ MenuBar.propTypes = {
 
   viewDashboard: PropTypes.func.isRequired,
   viewSprints: PropTypes.func.isRequired,
-  viewExpenses: PropTypes.func.isRequired,
+  viewInvoices: PropTypes.func.isRequired,
   viewSettings: PropTypes.func.isRequired
 };
 

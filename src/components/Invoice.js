@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class ExpenseInstance extends React.Component {
+class Invoice extends React.Component {
   render() {
     return (
       <tr>
@@ -13,10 +13,10 @@ class ExpenseInstance extends React.Component {
   }
 }
 
-ExpenseInstance.propTypes = {
+Invoice.propTypes = {
   date: PropTypes.string.isRequired,
   value: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired
 };
 
-export default ExpenseInstance;
+export default Invoice;

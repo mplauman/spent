@@ -6,7 +6,7 @@ import DateFormControl from './DateFormControl';
 import MoneyFormControl from './MoneyFormControl';
 import Formatters from '../Formatters';
 
-class AddExpense extends React.Component {
+class AddInvoice extends React.Component {
   constructor(props) {
     super(props);
 
@@ -25,7 +25,7 @@ class AddExpense extends React.Component {
     this.handleCountChanged = this.handleCountChanged.bind(this);
     this.handleFrequencyChanged = this.handleFrequencyChanged.bind(this);
     this.handleMultiaddChanged = this.handleMultiaddChanged.bind(this);
-    this.addExpense = this.addExpense.bind(this);
+    this.addInvoice = this.addInvoice.bind(this);
   }
 
   handleNameChanged = (event) => {
@@ -64,7 +64,7 @@ class AddExpense extends React.Component {
     });
   }
 
-  addExpense = () => {
+  addInvoice = () => {
     const prototype = {
       name: this.state.name,
       value: this.state.value * (this.props.isIncome ? 1.0 : -1.0),
@@ -85,7 +85,7 @@ class AddExpense extends React.Component {
 
         <Modal.Body>
           <Form horizontal>
-            <FormGroup controlId='expenseName'>
+            <FormGroup controlId='name'>
               <Col componentClass={ControlLabel} sm={2}>
                 Name
               </Col>
@@ -95,7 +95,7 @@ class AddExpense extends React.Component {
             </FormGroup>
             <DateFormControl controlId='startDate' title='Start Date' value={this.state.start} onChange={this.handleStartChanged} />
             <MoneyFormControl controlId='value' title='Value' value={this.state.value} onChange={this.handleValueChanged} />
-            <FormGroup controlId='expenseFrequency'>
+            <FormGroup controlId='frequency'>
               <Col componentClass={ControlLabel} sm={2}>
                 Frequecy
               </Col>
@@ -119,17 +119,17 @@ class AddExpense extends React.Component {
           <Checkbox inline value={this.state.multiadd} onChange={this.handleMultiaddChanged}>Add more</Checkbox>
           &nbsp;
           <Button onClick={this.props.onCancel}>Cancel</Button>
-          <Button bsStyle='primary' onClick={this.addExpense}>Add</Button>
+          <Button bsStyle='primary' onClick={this.addInvoice}>Add</Button>
         </Modal.Footer>
       </Modal.Dialog>
     );
   }
 }
-AddExpense.propTypes = {
+AddInvoice.propTypes = {
   title: PropTypes.string.isRequired,
   isIncome: PropTypes.bool.isRequired,
   onAdd: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired
 };
 
-export default AddExpense;
+export default AddInvoice;

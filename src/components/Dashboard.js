@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-//import axios from 'axios';
 import {Jumbotron, Well} from 'react-bootstrap';
 
 import SprintDetails from './SprintDetails';
@@ -13,7 +12,7 @@ class Dashboard extends React.Component {
         <Jumbotron>
           <h2>Life comes at you fast</h2>
           <p>
-            Spent is a simple way to budget your expenses. Instead of tracking
+            Spent is a simple way to budget your money. Instead of tracking
             every nickel and dime, Spent provides an estimate of how much cash
             you&#39;ll have available by the next time you get paid.
           </p>

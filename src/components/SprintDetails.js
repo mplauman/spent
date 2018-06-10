@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ExpenseInstanceList from './ExpenseInstanceList';
+import InvoiceList from './InvoiceList';
 
 class SprintDetails extends React.Component {
   render() {
@@ -9,8 +9,8 @@ class SprintDetails extends React.Component {
       <div>
         <div><strong>Opening Balance:</strong> {this.props.openingBalance}</div>
 
-        <ExpenseInstanceList expenses={this.props.expenses} />
-        
+        <InvoiceList invoices={this.props.invoices} />
+
         <div><strong>Projected Closing:</strong> {this.props.closingBalance}</div>
         <div><strong>Revised Closing:</strong> {this.props.revisedClosing}</div>
       </div>
@@ -20,7 +20,7 @@ class SprintDetails extends React.Component {
 
 SprintDetails.propTypes = {
   startDate: PropTypes.string.isRequired,
-  expenses: PropTypes.array.isRequired,
+  invoices: PropTypes.array.isRequired,
   openingBalance: PropTypes.number.isRequired,
   closingBalance: PropTypes.number.isRequired,
   revisedClosing: PropTypes.number.isRequired

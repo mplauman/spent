@@ -1,17 +1,17 @@
 import React from 'react';
 import axios from 'axios';
 
-import AddExpense from './AddExpense';
+import AddInvoice from './AddInvoice';
 import AddSprint from './AddSprint';
 import Dashboard from './Dashboard';
-import Expenses from './Expenses';
+import Invoices from './Invoices';
 import MenuBar from './MenuBar';
 import Settings from './Settings';
 import Sprints from './Sprints';
 
 const Views = Object.freeze({
   dashboard: {},
-  expenses: {},
+  invoices: {},
   settings: {},
   sprints: {}
 });
@@ -91,7 +91,7 @@ class App extends React.Component {
       .catch(console.error);
   }
 
-  addExpenses = (prototype, addMore) => {
+  addInvoices = (prototype, addMore) => {
     if (!addMore) {
       this.setState({
         dialog: Dialogs.none
@@ -99,7 +99,7 @@ class App extends React.Component {
     }
 
     axios
-      .post('/api/expenses', [ prototype ])
+      .post('/api/invoices', [ prototype ])
       .then(() => {
         const current = axios.get('/api/sprints/current');
         const projections = axios.get('/api/sprints/projections');
@@ -136,8 +136,8 @@ class App extends React.Component {
       );
       break;
 
-    case Views.expenses:
-      view = (<Expenses/>);
+    case Views.invoices:
+      view = (<Invoices/>);
       break;
 
     case Views.settings:
@@ -166,10 +166,10 @@ class App extends React.Component {
 
     case Dialogs.addExpense:
       dialog = (
-        <AddExpense
+        <AddInvoice
           title='New Expense'
           isIncome={false}
-          onAdd={this.addExpenses}
+          onAdd={this.addInvoices}
           onCancel={() => this.setDialog(Dialogs.none)}
         />
       );
@@ -178,10 +178,10 @@ class App extends React.Component {
     case Dialogs.addIncome:
       {
         dialog = (
-          <AddExpense
+          <AddInvoice
             title='New Income'
             isIncome={true}
-            onAdd={this.addExpenses}
+            onAdd={this.addInvoices}
             onCancel={() => this.setDialog(Dialogs.none)}
           />
         );
@@ -207,7 +207,7 @@ class App extends React.Component {
           logOut={this.logOut}
           viewDashboard={() => this.setView(Views.dashboard)}
           viewSprints={() => this.setView(Views.sprints)}
-          viewExpenses={() => this.setView(Views.expenses)}
+          viewInvoices={() => this.setView(Views.invoices)}
           viewSettings={() => this.setView(Views.settings)}
         />
         {dialog}

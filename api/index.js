@@ -1,6 +1,5 @@
 import express from 'express';
 import Formatters from '../src/Formatters';
-import assert from 'assert';
 
 let currentSprint = null;
 let oldSprints = [];
@@ -11,46 +10,12 @@ let invoicePrototypes = [];
  * the provided date.
  */
 const rollForward = (prototype, firstDate) => {
-  console.info('rolling ', prototype, ' to ', firstDate);
   const startDate = Formatters.dateFromString(prototype.startDate);
 
-  // Compare dates using only their year/month/day. Otherwise their individual
-  // times will come into the equation and result in some false rollovers.
-  const isLess = (lhs, rhs) => {
-
-    const lhsYear = lhs.getFullYear();
-    const rhsYear = rhs.getFullYear();
-    if (lhsYear < rhsYear) {
-      console.info(lhsYear, '<', rhsYear);
-      return true;
-    }
-    console.info(lhsYear, '>=', rhsYear);
-
-    const lhsMonth = lhs.getMonth();
-    const rhsMonth = rhs.getMonth();
-    if (lhs.getMonth() < rhs.getMonth()) {
-      console.info(lhsMonth, '<', rhsMonth);
-      return true;
-    }
-    console.info(lhsMonth, '>=', rhsMonth);
-
-    const lhsDate = lhs.getDate();
-    const rhsDate = rhs.getDate();
-    if (lhsDate < rhsDate) {
-      console.info(lhsDate, '<', rhsDate);
-      return true;
-    }
-    console.info(lhsDate, '>=', rhsDate);
-
-    return false;
-  };
-
-  while (startDate < firstDate /*isLess(startDate, firstDate)*/) {
-    console.info(startDate, 'is less than', firstDate, 'and will be advanced');
+  while (startDate < firstDate) {
 
     switch (prototype.frequency) {
     case 'once':
-      console.info(prototype, 'has already occurred, dropping');
       return null;
 
     case 'days':
@@ -74,16 +39,13 @@ const rollForward = (prototype, firstDate) => {
     }
   }
 
-  const rc = {
+  return {
     name: prototype.name,
     startDate: Formatters.dateToString(startDate),
     value: prototype.value,
     count: prototype.count,
     frequency: prototype.frequency
   };
-
-  console.info('rolled', rc);
-  return rc;
 };
 
 const accumulateInvoice = (sum, invoice) => {
@@ -107,16 +69,12 @@ const instantiateInvoices = (startDate, endDate, invoicePrototypes) => {
   const nextStart = Formatters.dateFromString(endDate);
   nextStart.setDate(nextStart.getDate() + 1);
 
-  console.info('instantiating ' + invoicePrototypes.length + ' invoice prototypes');
   for (let i = 0; invoicePrototypes != null && i < invoicePrototypes.length; ++i) {
-    const sourcePrototype = invoicePrototypes[i];
-    console.info('source', sourcePrototype);
 
     // Roll this invoice prototype forward until it occurs after the beginning
     // of this sprint.
-    let invoicePrototype = rollForward(sourcePrototype, start);
+    let invoicePrototype = rollForward(invoicePrototypes[i], start);
     while (invoicePrototype != null && invoicePrototype.startDate <= endDate) {
-      console.info('instance', invoicePrototype);
 
       newInvoices.push({
         name: invoicePrototype.name,
@@ -129,7 +87,6 @@ const instantiateInvoices = (startDate, endDate, invoicePrototypes) => {
       // of the sprint.
       const nextInstanceDate = Formatters.dateFromString(invoicePrototype.startDate);
       nextInstanceDate.setDate(nextInstanceDate.getDate() + 1);
-      console.info('next date', nextInstanceDate);
 
       invoicePrototype = rollForward(invoicePrototype, nextInstanceDate);
     }
@@ -173,18 +130,8 @@ router.get('/sprints/current', (req, res) => {
  * updated to occur after this sprint.
  */
 router.post('/sprints/current', (req, res) => {
-  assert(req.body.startDate != null);
-  assert(req.body.endDate != null);
-  assert(req.body.openingBalance != null);
-
   const sprintPrototype = req.body;
-  console.info('createing a new current sprint', sprintPrototype);
-  console.info('current invoice prototypes', invoicePrototypes);
-
   const {newInvoices, revisedPrototypes} = instantiateInvoices(sprintPrototype.startDate, sprintPrototype.endDate, invoicePrototypes);
-  console.info('new invoices', newInvoices);
-  console.info('updated invoice prototypes', revisedPrototypes);
-
   const closingBalance = newInvoices.reduce(accumulateInvoice, sprintPrototype.openingBalance);
 
   const newSprint = {
@@ -195,10 +142,8 @@ router.post('/sprints/current', (req, res) => {
     closingBalance: closingBalance,
     revisedClosing: closingBalance
   };
-  console.info('new sprint', newSprint);
 
   if (currentSprint != null) {
-    console.info('saving previous sprint');
     oldSprints.push(currentSprint);
   }
 
@@ -215,14 +160,6 @@ router.post('/sprints/current', (req, res) => {
  * they will be instantiated and added to the sprint.
  */
 router.post('/expenses', (req, res) => {
-  req.body.forEach(invoice => {
-    assert(invoice.name != null);
-    assert(invoice.value != null);
-    assert(invoice.startDate != null);
-    assert(invoice.count != null);
-    assert(invoice.frequency != null);
-  });
-
   const sprint = currentSprint;
   if (sprint != null) {
     const {newInvoices, revisedPrototypes} = instantiateInvoices(sprint.startDate, sprint.endDate, req.body);

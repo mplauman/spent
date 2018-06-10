@@ -49,7 +49,7 @@ class AddSprint extends React.Component {
 
   handleOpeningBalanceChanged(event) {
     this.setState({
-      openingBalance: event.target.value
+      openingBalance: Number(event.target.value)
     });
   }
 

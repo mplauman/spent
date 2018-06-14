@@ -1,13 +1,16 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 
 import AddInvoice from './AddInvoice';
 import AddSprint from './AddSprint';
 import Dashboard from './Dashboard';
 import Invoices from './Invoices';
+import LogInDialog from './LogInDialog';
 import MenuBar from './MenuBar';
 import Settings from './Settings';
 import Sprints from './Sprints';
+
 
 const Views = Object.freeze({
   dashboard: {},
@@ -20,13 +23,14 @@ const Dialogs = Object.freeze({
   none: {},
   addSprint: {},
   addExpense: {},
-  addIncome: {}
+  addIncome: {},
+  logIn: {}
 });
 
 class App extends React.Component {
 
-  logIn = () => {
-    console.info('logging in');
+  loggedIn = (credentials) => {
+    console.info('logged in', credentials);
 
     let current = axios
       .get('/api/sprints/current')
@@ -53,7 +57,9 @@ class App extends React.Component {
     this.setState({
       loggedIn: false,
       currentSprint: null,
-      projectedSprints: null
+      projectedSprints: null,
+      view: Views.dashboard,
+      dialog: Dialogs.none
     });
   }
 
@@ -176,20 +182,29 @@ class App extends React.Component {
       break;
 
     case Dialogs.addIncome:
-      {
-        dialog = (
-          <AddInvoice
-            title='New Income'
-            isIncome={true}
-            onAdd={this.addInvoices}
-            onCancel={() => this.setDialog(Dialogs.none)}
-          />
-        );
-      }
+      dialog = (
+        <AddInvoice
+          title='New Income'
+          isIncome={true}
+          onAdd={this.addInvoices}
+          onCancel={() => this.setDialog(Dialogs.none)}
+        />
+      );
       break;
 
     case Dialogs.none:
       dialog = null;
+      break;
+
+    case Dialogs.logIn:
+      dialog = (
+        <LogInDialog
+          onSuccess={this.loggedIn}
+          onCancel={() => this.setDialog(Dialogs.none)}
+          googleAppId={this.props.googleAppId}
+          linkedinAppId={this.props.linkedinAppId}
+        />
+      );
       break;
 
     default:
@@ -203,18 +218,23 @@ class App extends React.Component {
           startSprint={() => this.setDialog(Dialogs.addSprint)}
           addExpense={() => this.setDialog(Dialogs.addExpense)}
           addIncome={() => this.setDialog(Dialogs.addIncome)}
-          logIn={this.logIn}
+          logIn={() => this.setDialog(Dialogs.logIn)}
           logOut={this.logOut}
           viewDashboard={() => this.setView(Views.dashboard)}
           viewSprints={() => this.setView(Views.sprints)}
           viewInvoices={() => this.setView(Views.invoices)}
           viewSettings={() => this.setView(Views.settings)}
         />
+
         {dialog}
         {view}
       </div>
     );
   }
 }
+App.propTypes = {
+  googleAppId: PropTypes.string.isRequired,
+  linkedinAppId: PropTypes.string.isRequired
+};
 
 export default App;

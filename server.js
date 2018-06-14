@@ -13,7 +13,10 @@ server.use(bodyparser.json());
 server.use('/api', api);
 
 server.get('/', (req, res) => {
-  res.render('index');
+  res.render('index', {
+    googleAppId: config.googleAppId,
+    linkedinAppId: config.linkedinAppId
+  });
 });
 
 server.listen(config.port, config.host, () => {

@@ -48,7 +48,7 @@ class App extends React.Component {
       .all([current, projections])
       .then(results => {
         this.setState({
-          loggedIn: true,
+          requestConfig: config,
           currentSprint: results[0] ? results[0] : null,
           projectedSprints: results[1],
           dialog: Dialogs.none
@@ -60,7 +60,7 @@ class App extends React.Component {
   logOut = () => {
     console.info('logging out');
     this.setState({
-      loggedIn: false,
+      requestConfig: null,
       currentSprint: null,
       projectedSprints: null,
       view: Views.dashboard,
@@ -86,13 +86,13 @@ class App extends React.Component {
     });
 
     axios
-      .post('/api/sprints/current', prototype)
+      .post('/api/sprints/current', prototype, this.state.requestConfig)
       .then(resp => {
         this.setState({
           currentSprint: resp.data
         });
 
-        return axios.get('/api/sprints/projections');
+        return axios.get('/api/sprints/projections', this.state.requestConfig);
       })
       .then(resp => {
         this.setState({
@@ -110,10 +110,10 @@ class App extends React.Component {
     }
 
     axios
-      .post('/api/invoices', [ prototype ])
+      .post('/api/invoices', [ prototype ], this.state.requestConfig)
       .then(() => {
-        const current = axios.get('/api/sprints/current');
-        const projections = axios.get('/api/sprints/projections');
+        const current = axios.get('/api/sprints/current', this.state.requestConfig);
+        const projections = axios.get('/api/sprints/projections', this.state.requestConfig);
 
         return Promise.all([current, projections]);
       })
@@ -129,7 +129,7 @@ class App extends React.Component {
   state = {
     view: Views.dashboard,
     dialog: Dialogs.none,
-    loggedIn: false,
+    requestConfig: null,
     currentSprint: null,
     projectedSprints: null
   };
@@ -140,7 +140,7 @@ class App extends React.Component {
     case Views.dashboard:
       view = (
         <Dashboard
-          loggedIn={this.state.loggedIn}
+          loggedIn={this.state.requestConfig != null}
           currentSprint={this.state.currentSprint}
           projectedSprints={this.state.projectedSprints}
         />
@@ -219,7 +219,7 @@ class App extends React.Component {
     return (
       <div>
         <MenuBar
-          loggedIn={this.state.loggedIn}
+          loggedIn={this.state.requestConfig != null}
           startSprint={() => this.setDialog(Dialogs.addSprint)}
           addExpense={() => this.setDialog(Dialogs.addExpense)}
           addIncome={() => this.setDialog(Dialogs.addIncome)}

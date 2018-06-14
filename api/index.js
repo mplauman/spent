@@ -3,9 +3,23 @@ import axios from 'axios';
 
 import Formatters from '../src/Formatters';
 
-let currentSprint = null;
-let oldSprints = [];
-let invoicePrototypes = [];
+let users = {};
+
+const getUser = (userId) => {
+  let user = users[userId];
+
+  if (user == null) {
+    user = {
+      currentSprint: null,
+      oldSprints: [],
+      invoicePrototypes: []
+    };
+
+    users[userId] = user;
+  }
+
+  return user;
+};
 
 /**
  * Advance a sprint prototype forward until it occurs on or after
@@ -65,7 +79,7 @@ const accumulateInvoice = (sum, invoice) => {
  */
 const instantiateInvoices = (startDate, endDate, invoicePrototypes) => {
   let newInvoices = [];
-  let revisedPrototypes = []; //invoicePrototypes;
+  let revisedPrototypes = [];
 
   const start = Formatters.dateFromString(startDate);
   const nextStart = Formatters.dateFromString(endDate);
@@ -188,14 +202,10 @@ router.use((req, resp, next) => {
         console.error(err);
         resp.status(401).send('linkedin rejected request');
       });
-    break;
-
-  default:
-    resp.status(401).send('not authenticated');
     return;
   }
 
-  next();
+  resp.status(401).send('not authenticated');  
 });
 
 /**
@@ -203,17 +213,20 @@ router.use((req, resp, next) => {
  * bold previous sprints as well as the current one.
  */
 router.get('/sprints', (req, res) => {
-  let allSprints = [...oldSprints];
+  const user = getUser(req.userDetails.id);
 
-  if (currentSprint != null) {
-    allSprints.push(currentSprint);
+  const allSprints = [...user.oldSprints];
+  if (user.currentSprint != null) {
+    allSprints.push(user.currentSprint);
   }
 
   res.send(allSprints);
 });
 
 router.get('/sprints/current', (req, res) => {
-  res.send(currentSprint);
+  const user = getUser(req.userDetails.id);
+
+  res.send(user.currentSprint);
 });
 
 /**
@@ -223,8 +236,10 @@ router.get('/sprints/current', (req, res) => {
  * updated to occur after this sprint.
  */
 router.post('/sprints/current', (req, res) => {
+  const user = getUser(req.userDetails.id);
+
   const sprintPrototype = req.body;
-  const {newInvoices, revisedPrototypes} = instantiateInvoices(sprintPrototype.startDate, sprintPrototype.endDate, invoicePrototypes);
+  const {newInvoices, revisedPrototypes} = instantiateInvoices(sprintPrototype.startDate, sprintPrototype.endDate, user.invoicePrototypes);
   const closingBalance = newInvoices.reduce(accumulateInvoice, sprintPrototype.openingBalance);
 
   const newSprint = {
@@ -236,12 +251,12 @@ router.post('/sprints/current', (req, res) => {
     revisedClosing: closingBalance
   };
 
-  if (currentSprint != null) {
-    oldSprints.push(currentSprint);
+  if (user.currentSprint != null) {
+    user.oldSprints.push(user.currentSprint);
   }
 
-  currentSprint = newSprint;
-  invoicePrototypes = revisedPrototypes;
+  user.currentSprint = newSprint;
+  user.invoicePrototypes = revisedPrototypes;
 
   res.send(newSprint);
 });
@@ -253,7 +268,9 @@ router.post('/sprints/current', (req, res) => {
  * they will be instantiated and added to the sprint.
  */
 router.post('/invoices', (req, res) => {
-  const sprint = currentSprint;
+  const user = getUser(req.userDetails.id);
+
+  const sprint = user.currentSprint;
   if (sprint != null) {
     const {newInvoices, revisedPrototypes} = instantiateInvoices(sprint.startDate, sprint.endDate, req.body);
 
@@ -261,25 +278,29 @@ router.post('/invoices', (req, res) => {
     sprint.revisedClosing = newInvoices.reduce(accumulateInvoice, sprint.revisedClosing);
     sprint.invoices = [...sprint.invoices, ...newInvoices];
 
-    invoicePrototypes = [...invoicePrototypes, ...revisedPrototypes];
+    user.invoicePrototypes = [...user.invoicePrototypes, ...revisedPrototypes];
   } else {
-    invoicePrototypes = [...invoicePrototypes, ...req.body];
+    user.invoicePrototypes = [...user.invoicePrototypes, ...req.body];
   }
 
-  res.send(invoicePrototypes);
+  res.send(user.invoicePrototypes);
 });
 router.get('/invoices', (req, resp) => {
-  resp.send(invoicePrototypes);
+  const user = getUser(req.userDetails.id);
+
+  resp.send(user.invoicePrototypes);
 });
 
 /**
  * Roll forward through the invoices and calculate a few sprints.
  */
 router.get('/sprints/projections', (req, res) => {
+  const user = getUser(req.userDetails.id);
+
   const projections = [];
 
-  let prevSprint = currentSprint;
-  let prevInvoicePrototypes = invoicePrototypes;
+  let prevSprint = user.currentSprint;
+  let prevInvoicePrototypes = user.invoicePrototypes;
   for (let i = 0; i < 6 && prevSprint != null; ++i) {
 
     const startDate = Formatters.dateFromString(prevSprint.endDate);

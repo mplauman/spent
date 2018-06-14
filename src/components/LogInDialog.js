@@ -7,7 +7,6 @@ import SocialButton from './SocialButton';
 class LogInDialog extends React.Component {
 
   googleLoginSuccess = (resp) => {
-    console.info('google login success', resp);
     this.props.onSuccess({
       provider: 'google',
       token: resp._token.idToken,
@@ -21,7 +20,6 @@ class LogInDialog extends React.Component {
   }
 
   linkedinLoginSuccess = (resp) => {
-    console.info('linkedin login success', resp);
     this.props.onSuccess({
       provider: 'linkedin',
       token: resp._token.accessToken,

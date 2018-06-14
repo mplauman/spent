@@ -1,4 +1,6 @@
 import express from 'express';
+import axios from 'axios';
+
 import Formatters from '../src/Formatters';
 
 let currentSprint = null;
@@ -104,6 +106,97 @@ const instantiateInvoices = (startDate, endDate, invoicePrototypes) => {
 };
 
 const router = express.Router();
+
+/**
+ * Install a piece of middleware to perform user authentication on every API
+ * request.
+ *
+ * This assumes that every request includes an Authorization header of the
+ * form <provider id> <magic token>.
+ *
+ * The token will be sent to a provider-specific endpoint to be translated
+ * into the user's information, namely the user's identifier on that platform.
+ * That identifier is then used to create a pair of values:
+ * - A spent-specific identifier. This is done by computing a sha256 signature
+ *   of the provider-specific identifier plus some (constant) random garbage.
+ * - A spent-specific encrption key. This is again a sha256 signature based on
+ *   the provider-specific identifier and (constant, different) random garbage.
+ *
+ * The identifier here gets used to uniquely identify each of Spent's users,
+ * without the application ever really knowing the source user. This is
+ * important for privacy: the authors would like to user their friends as guinea
+ * pigs without knowing their financial details. The hashing function basically
+ * anonymizes them.
+ *
+ * A similar concept applies with the encryption key. The use of different
+ * garbage means that it'll be different than the user id, which gets stored
+ * in the database. This encryption key is used to encrypt/decrypt the financial
+ * information.
+ *
+ * Combined, this means the following:
+ * - The sprint server doesn't know the source identities of its users.
+ * - Sprint developers with access to the database are unable to read the
+ *   financial details of its users.
+ *
+ * Again, this is important for the ability to invite friends and family as
+ * test subjects. It is important that Spent developers will be unable to
+ * view their financial details, even accidentally.
+ */
+router.use((req, resp, next) => {
+  const authHeader = req.get('Authorization');
+  if (authHeader == null) {
+    resp.status(401).send('missing Authorization header');
+    return;
+  }
+
+  const [provider, token] = [...authHeader.split(' ')];
+
+  switch (provider) {
+  case 'google':
+    axios
+      .get('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + token)
+      .then((resp) => {
+        const userId = resp.data.sub;
+        req.userDetails = {
+          id: 'google:idHash:' + userId,
+          encryptionKey: 'google:keyHash:' + userId
+        };
+        next();
+      })
+      .catch((err) => {
+        console.error(err);
+        resp.status(401).send('google rejected request');
+      });
+    return;
+
+  case 'linkedin':
+    axios
+      .get('https://api.linkedin.com/v1/people/~?format=json', {
+        headers: {
+          oauth_token: token
+        }
+      })
+      .then((resp) => {
+        const userId = resp.data.id;
+        req.userDetails = {
+          id: 'linkedin:idHash:' + userId,
+          encryptionKey: 'linkedin:keyHash:' + userId
+        };
+        next();
+      })
+      .catch ((err) => {
+        console.error(err);
+        resp.status(401).send('linkedin rejected request');
+      });
+    break;
+
+  default:
+    resp.status(401).send('not authenticated');
+    return;
+  }
+
+  next();
+});
 
 /**
  * Returns a list of all the sprints. This includes

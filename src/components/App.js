@@ -30,14 +30,18 @@ const Dialogs = Object.freeze({
 class App extends React.Component {
 
   loggedIn = (credentials) => {
-    console.info('logged in', credentials);
+    const config = {
+      headers: {
+        Authorization: credentials.provider + ' ' + credentials.token
+      }
+    };
 
     let current = axios
-      .get('/api/sprints/current')
+      .get('/api/sprints/current', config)
       .then(resp => resp.data);
 
     let projections = axios
-      .get('/api/sprints/projections')
+      .get('/api/sprints/projections', config)
       .then(resp => resp.data);
 
     Promise
@@ -46,7 +50,8 @@ class App extends React.Component {
         this.setState({
           loggedIn: true,
           currentSprint: results[0] ? results[0] : null,
-          projectedSprints: results[1]
+          projectedSprints: results[1],
+          dialog: Dialogs.none
         });
       })
       .catch(console.error);

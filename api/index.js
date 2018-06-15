@@ -1,6 +1,8 @@
 import express from 'express';
 import axios from 'axios';
+import shajs from 'sha.js';
 
+import config from '../config';
 import Formatters from '../src/Formatters';
 
 let users = {};
@@ -165,47 +167,50 @@ router.use((req, resp, next) => {
 
   const [provider, token] = [...authHeader.split(' ')];
 
+  let getId = null;
   switch (provider) {
   case 'google':
-    axios
+    getId = axios
       .get('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + token)
       .then((resp) => {
-        const userId = resp.data.sub;
-        req.userDetails = {
-          id: 'google:idHash:' + userId,
-          encryptionKey: 'google:keyHash:' + userId
-        };
-        next();
-      })
-      .catch((err) => {
-        console.error(err);
-        resp.status(401).send('google rejected request');
+        console.info('google success');
+        return resp.data.sub;
       });
-    return;
+    break;
 
   case 'linkedin':
-    axios
+    getId = axios
       .get('https://api.linkedin.com/v1/people/~?format=json', {
         headers: {
           oauth_token: token
         }
       })
       .then((resp) => {
-        const userId = resp.data.id;
-        req.userDetails = {
-          id: 'linkedin:idHash:' + userId,
-          encryptionKey: 'linkedin:keyHash:' + userId
-        };
-        next();
-      })
-      .catch ((err) => {
-        console.error(err);
-        resp.status(401).send('linkedin rejected request');
+        console.info('linkedin success');
+        return resp.data.id;
       });
+    break;
+
+  default:
+    resp.status(401).send('not authenticated');
     return;
   }
 
-  resp.status(401).send('not authenticated');  
+  getId
+    .then((id) => {
+      const hash = shajs('sha256');
+
+      req.userDetails = {
+        id: hash.update(provider + ':' + config.userIdHashFudge + ':' + id).digest('hex'),
+        key: hash.update(provider + ':' + config.userKeyHashFudge + ':' + id).digest('hex')
+      };
+      console.info(req.userDetails);
+      next();
+    })
+    .catch((err) => {
+      console.error(err);
+      resp.status(401).send('auth request failed');
+    });
 });
 
 /**

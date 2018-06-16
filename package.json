@@ -1,7 +1,11 @@
 {
   "name": "spent",
   "version": "1.0.0",
-  "description": "",
+  "description": "A demo website/personal expense tracker.",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/mplauman/spent"
+  },
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec babel-node server.js --ignore public",

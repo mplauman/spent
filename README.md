@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mplauman/spent.svg?branch=master)](https://travis-ci.org/mplauman/spent)
+
 # Spent
 
 A simple personal finance website.

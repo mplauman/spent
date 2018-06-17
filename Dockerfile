@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm install --only=production
+RUN npm install
 
 ARG GIT_COMMIT=unspecified
 LABEL git_commit=$GIT_COMMIT

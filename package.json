@@ -11,7 +11,11 @@
     "start": "nodemon --exec babel-node server.js --ignore public",
     "test": "echo No tests yet",
     "dev": "webpack -wd",
-    "build": "webpack"
+    "build": "webpack && babel . --ignore build,node_modules,webpack.config.js -d build",
+    "serve": "node server.js"
+  },
+  "babel": {
+      "presets": ["react", "es2015", "stage-2"]
   },
   "author": "Matt Plaumann",
   "license": "ISC",

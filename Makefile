@@ -10,7 +10,7 @@ error:
 	@echo "Please choose one of the following targets: build push login"
 	@exit 2
 
-build:
+image:
 	@docker build -t ${IMG} . --build-arg GIT_COMMIT=${TAG}
 	@docker tag ${IMG} ${LATEST}
 

@@ -29,7 +29,7 @@ script:
 # The kubernetes cluster is configured to automatically pull the latest
 # version out of the dockerhub repo.
 after_success:
-  - make build
+  - make image
   - make login
   - make push
 

@@ -173,7 +173,6 @@ router.use((req, resp, next) => {
     getId = axios
       .get('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + token)
       .then((resp) => {
-        console.info('google success');
         return resp.data.sub;
       });
     break;
@@ -186,7 +185,6 @@ router.use((req, resp, next) => {
         }
       })
       .then((resp) => {
-        console.info('linkedin success');
         return resp.data.id;
       });
     break;
@@ -204,7 +202,6 @@ router.use((req, resp, next) => {
         id: hash.update(provider + ':' + config.userIdHashFudge + ':' + id).digest('hex'),
         key: hash.update(provider + ':' + config.userKeyHashFudge + ':' + id).digest('hex')
       };
-      console.info(req.userDetails);
       next();
     })
     .catch((err) => {

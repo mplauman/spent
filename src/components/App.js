@@ -1,16 +1,42 @@
 import React from 'react';
+import Loadable from 'react-loadable';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-import AddInvoice from './AddInvoice';
-import AddSprint from './AddSprint';
-import Dashboard from './Dashboard';
-import Invoices from './Invoices';
-import LogInDialog from './LogInDialog';
-import MenuBar from './MenuBar';
-import Settings from './Settings';
-import Sprints from './Sprints';
+import Loading from './LoadingComponent';
 
+const AddInvoice = Loadable({
+  loader: () => import(/*webpackChunkName: 'addInvoice'*/ './AddInvoice'),
+  loading: Loading
+});
+const AddSprint = Loadable({
+  loader: () => import(/*webpackChunkName: 'addSprint'*/ './AddSprint'),
+  loading: Loading
+});
+const Dashboard = Loadable({
+  loader: () => import(/*webpackChunkName: 'dashboard'*/ './Dashboard'),
+  loading: Loading
+});
+const Invoices = Loadable({
+  loader: () => import(/*webpackChunkName: 'invoices'*/ './Invoices'),
+  loading: Loading
+});
+const LogInDialog = Loadable({
+  loader: () => import(/*webpackChunkName: 'logInDialog'*/ './LogInDialog'),
+  loading: Loading
+});
+const MenuBar = Loadable({
+  loader: () => import(/*webpackChunkName: 'menuBar'*/ './MenuBar'),
+  loading: Loading
+});
+const Settings = Loadable({
+  loader: () => import(/*webpackChunkName: 'settings'*/ './Settings'),
+  loading: Loading
+});
+const Sprints = Loadable({
+  loader: () => import(/*webpackChunkName: 'sprints'*/ './Sprints'),
+  loading: Loading
+});
 
 const Views = Object.freeze({
   dashboard: {},

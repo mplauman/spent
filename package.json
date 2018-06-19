@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "A demo website/personal expense tracker.",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/mplauman/spent"
+    "type": "git",
+    "url": "https://github.com/mplauman/spent"
   },
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,11 @@
     "serve": "node server.js"
   },
   "babel": {
-      "presets": ["react", "es2015", "stage-2"]
+    "presets": [
+      "react",
+      "es2015",
+      "stage-2"
+    ]
   },
   "author": "Matt Plaumann",
   "license": "ISC",
@@ -27,6 +31,7 @@
     "react": "^16.4.0",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.4.0",
+    "react-loadable": "^5.4.0",
     "react-social-login": "^3.4.2",
     "sha.js": "^2.4.11"
   },

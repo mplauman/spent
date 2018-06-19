@@ -11,7 +11,7 @@
     "start": "nodemon --exec babel-node server.js --ignore public",
     "test": "echo No tests yet",
     "dev": "webpack -wd",
-    "build": "webpack && babel . --ignore build,node_modules,webpack.config.js -d build",
+    "build": "webpack --mode=production && babel . --ignore build,node_modules,webpack.config.js -d build",
     "serve": "node server.js"
   },
   "babel": {

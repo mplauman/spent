@@ -14,13 +14,12 @@ services:
 # See here for why 'ci' is used instead of 'install':
 # https://docs.npmjs.com/cli/ci
 install:
-  - npm ci
+  - make install
 
 # Run the test suite and then the build step to perform any tranpiling
 # steps to output final code.
 script:
-  - npm test
-  - npm run build
+  - make script
 
 # Assemble a docker image and publish it to dockerhub. This step requires
 # the DOCKER_USER and DOCKER_PASS environment variables to be set. These
@@ -29,7 +28,5 @@ script:
 # The kubernetes cluster is configured to automatically pull the latest
 # version out of the dockerhub repo.
 after_success:
-  - make image
-  - make login
-  - make push
+  - make after_success
 

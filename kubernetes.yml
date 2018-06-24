@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spent
+---
+apiVersion: v1
+data:
+  googleAppId: ${BASE64_GOOGLE_APP_ID}
+  linkedinAppId: ${BASE64_LINKEDIN_APP_ID}
+kind: Secret
+metadata:
+  name: appids
+  namespace: spent
+  labels:
+    app: spent
+type: Opaque
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spent-deployment
+  namespace: spent
+  labels:
+    app: spent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spent
+  template:
+    metadata:
+      labels:
+        app: spent
+    spec:
+      containers:
+        - name: spent
+          image: ${IMG}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GOOGLE_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: appids
+                  key: googleAppId
+            - name: LINKEDIN_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: appids
+                  key: linkedinAppId
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spent-webapp
+  namespace: spent
+spec:
+  selector:
+    app: spent
+  ports:
+  - port: 8080
+    protocol: TCP
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: spent
+  name: spent-ingress
+spec:
+  rules:
+    - host: spent.plaumann.ca
+      http:
+        paths:
+          - backend:
+              serviceName: spent-webapp
+              servicePort: 8080

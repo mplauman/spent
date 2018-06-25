@@ -61,6 +61,7 @@ gcloud-login:
 	@gcloud config set project ${GCLOUD_PROJECT_ID}
 	@gcloud config set container/cluster ${GCLOUD_CLUSTER_ID}
 	@gcloud config set compute/zone ${GCLOUD_COMPUTE_ZONE}
+	@gcloud components install kubectl
 	@gcloud container clusters get-credentials ${GCLOUD_CLUSTER_ID}
 	@kubectl config view
 	@kubectl config current-context

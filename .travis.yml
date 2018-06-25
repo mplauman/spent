@@ -7,9 +7,13 @@ node_js:
 services:
   - docker
 
+cache:
+  directories:
+    - "$HOME/google-cloud-sdk/"
+
 # Use npm to install any local dependencies. This needs to install the dev
 # dependencies as well because the 'npm run build' step uses them for some
-# tranpiling.
+# transpiling.
 #
 # See here for why 'ci' is used instead of 'install':
 # https://docs.npmjs.com/cli/ci

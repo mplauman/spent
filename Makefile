@@ -6,8 +6,21 @@ export TAG	  := $(shell git log -1 --pretty=%h)
 export IMG	  := ${NAME}:${TAG}
 export LATEST := ${NAME}:latest
 
+# The GOOGLE_APP_ID and LINKEDIN_APP_ID environment variables are stored on
+# travis-ci. They're decrypted and provided as environment variables, which
+# then need to be base64-encoded to appease k8s's requirements.
+export BASE64_GOOGLE_APP_ID   := $(shell echo -n ${GOOGLE_APP_ID} | base64 --wrap=0)
+export BASE64_LINKEDIN_APP_ID := $(shell echo -n ${LINKEDIN_APP_ID} | base64 --wrap=0)
+
+# The CLOUDSDK_INSTALL_DIR and CLOUDSDK_CORE_DISABLE_PROMPTS variables instruct
+# the curl-downloaded script where to place the binaries and to install without
+# using any prompts.
+export CLOUDSDK_CORE_DISABLE_PROMPTS := 1
+export CLOUDSDK_INSTALL_DIR := ${HOME}/google-cloud-sdk
+
 CLI_TARGETS := image deploy login push docker-login gcloud-login gcloud-install
 CI_TARGETS  := install script after_success
+
 
 .PHONY: ${CLI_TARGETS} ${CI_TARGETS}
 
@@ -18,66 +31,31 @@ image:
 	@docker build -t ${IMG} . --build-arg GIT_COMMIT=${TAG}
 	@docker tag ${IMG} ${LATEST}
 
+# The kubernetes.yml file checked into source control is a template that
+# needs some values swapped into it. This is done via `envsubst` before 
+# feeding it to kubectl.
 deploy:
-	# Make sure these are provided. On the CI/CD system they should be stored
-	# securely so they aren't abused.
-	ifndef GOOGLE_APP_ID
-		$(error The GOOGLE_APP_ID environment variable must be set before deployment)
-	endif
-	ifndef LINKEDIN_APP_ID
-		$(error The LINKEDIN_APP_ID environment variable must be set before deployment)
-	endif
-
-	# The GOOGLE_APP_ID and LINKEDIN_APP_ID environment variables are stored on
-	# travis-ci. They're decrypted and provided as environment variables, which
-	# then need to be base64-encoded to appease k8s's requirements.
-	export BASE64_GOOGLE_APP_ID   := $(shell echo -n ${GOOGLE_APP_ID} | base64 --wrap=0)
-	export BASE64_LINKEDIN_APP_ID := $(shell echo -n ${LINKEDIN_APP_ID} | base64 --wrap=0)
-
-	# The kubernetes.yml file checked into source control is a template that
-	# needs some values swapped into it. This is done via `envsubst` before 
-	# feeding it to kubectl.
-	cat kubernetes.yml | envsubst | kubectl apply -f -
+	@cat kubernetes.yml | envsubst | kubectl apply -f -
 
 login: docker-login gcloud-login
 	
+# The DOCKER_USER and DOCKER_PASS environment variables are sensitive
+# and should be stored securely on the CI/CD system.
 docker-login:
-	# The DOCKER_USER and DOCKER_PASS environment variables are sensitive
-	# and should be stored securely on the CI/CD system.
 	@docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
 
+# This GCLOUD_KEY_FILE environment variable is a base64-encoded JSON
+# document containing the service account's information. Instructions
+# on acquiring this can be found here, under 'Creating the credentials':
+# https://cloud.google.com/solutions/continuous-delivery-with-travis-ci
+#
+# Once the file has been downloaded, base64-encode it via `base64 --wrap=0`
+# and save the output in travis-ci as an encrypted environment variable.
+#
+# That'll get it saved securely on travis. At build-time it will be
+# decrypted and provided as an environment variable, which is then
+# base64 decoded back into the account JSON.
 gcloud-login:
-	# Make sure the environment variables required for this have been set.
-	# These don't need to be used in normal dev environments, only when
-	# actually connecting to the GKE cluster.
-	#
-	# They should all be provided to the CI/CD build system. Note that some
-	# of these (in particular the GCLOUD_KEY_FILE) are sensitive and should
-	# be encrypted on the CI/CD system.
-	ifndef GCLOUD_PROJECT_ID
-		$(error GCLOUD_PROJECT_ID must be set to the parent project ID)
-	endif
-	ifndef GCLOUD_CLUSTER_ID
-		$(error GCLOUD_CLUSTER_ID must be set to the target cluster name)
-	endif
-	ifndef GCLOUD_COMPUTE_ZONE
-		$(error GCLOUD_COMPUTE_ZONE must be set to the target cluster zone)
-	endif
-	ifndef GCLOUD_KEY_FILE
-		$(error GCLOUD_KEY_FILE must be set to the base64-encoded contents of the service account file)
-	endif
-
-	# This GCLOUD_KEY_FILE environment variable is a base64-encoded JSON
-	# document containing the service account's information. Instructions
-	# on acquiring this can be found here, under 'Creating the credentials':
-	# https://cloud.google.com/solutions/continuous-delivery-with-travis-ci
-	#
-	# Once the file has been downloaded, base64-encode it via `base64 --wrap=0`
-	# and save the output in travis-ci as an encrypted environment variable.
-	#
-	# That'll get it saved securely on travis. At build-time it will be
-	# decrypted and provided as an environment variable, which is then
-	# base64 decoded back into the account JSON.
 	@echo ${GCLOUD_KEY_FILE} | base64 --decode > gcloud_service_account.json
 	@gcloud auth activate-service-account --key-file gcloud_service_account.json
 	@gcloud config set project ${GCLOUD_PROJECT_ID}
@@ -88,11 +66,6 @@ gcloud-login:
 	@kubectl config current-context
 
 gcloud-install:
-	# The CLOUDSDK_INSTALL_DIR and CLOUDSDK_CORE_DISABLE_PROMPTS variables instruct
-	# the curl-downloaded script where to place the binaries and to install without
-	# using any prompts.
-	export CLOUDSDK_CORE_DISABLE_PROMPTS := 1
-	export CLOUDSDK_INSTALL_DIR := ${HOME}/google-cloud-sdk
 	@if [ ! -d ${CLOUDSDK_INSTALL_DIR} ]; then curl https://sdk.cloud.google.com | bash; fi
 
 push:

@@ -18,7 +18,7 @@ type: Opaque
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spent-deployment
+  name: spent-webapp
   namespace: spent
   labels:
     app: spent
@@ -48,19 +48,6 @@ spec:
                 secretKeyRef:
                   name: appids
                   key: linkedinAppId
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: spent-webapp
-  namespace: spent
-spec:
-  selector:
-    app: spent
-  ports:
-  - port: 8080
-    protocol: TCP
-  type: LoadBalancer
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress

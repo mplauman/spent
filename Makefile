@@ -36,7 +36,7 @@ image:
 # needs some values swapped into it. This is done via `envsubst` before 
 # feeding it to kubectl.
 deploy:
-	@cat kubernetes.yml | envsubst | kubectl apply -f -
+	@cat kubernetes.yml | envsubst | ${KUBECTL_INSTALL_DIR}/kubectl apply -f -
 
 login: docker-login gcloud-login
 	
@@ -63,8 +63,8 @@ gcloud-login:
 	@gcloud config set container/cluster ${GCLOUD_CLUSTER_ID}
 	@gcloud config set compute/zone ${GCLOUD_COMPUTE_ZONE}
 	@gcloud container clusters get-credentials ${GCLOUD_CLUSTER_ID}
-	@kubectl config view
-	@kubectl config current-context
+	@${KUBECTL_INSTALL_DIR}/kubectl config view
+	@${KUBECTL_INSTALL_DIR}/kubectl config current-context
 
 gcloud-install:
 	@if [ ! -d ${CLOUDSDK_INSTALL_DIR} ]; then curl https://sdk.cloud.google.com | bash; fi

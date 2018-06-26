@@ -49,11 +49,27 @@ spec:
                   name: appids
                   key: linkedinAppId
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spent-webapp-service
+  namespace: spent
+  labels:
+    app: spent
+spec:
+  type: NodePort
+  selector:
+    app: spent
+  ports:
+    - port: 8080
+      targetPort: 8080
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   namespace: spent
   name: spent-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: spent-ip
 spec:
   rules:
     - host: spent.plaumann.ca

@@ -71,7 +71,7 @@ gcloud-install:
 	@if [ ! -d ${CLOUDSDK_INSTALL_DIR} ]; then curl https://sdk.cloud.google.com | bash; fi
 
 kubectl-install:
-	@if [ ! -d ${KUBECTL_INSTALL_DIR} ]; then mkdir -pv ${KUBECTL_INSTALL_DIR} && curl https://storage.googleapis.com/kubernetes-release/release/v1.10.5/bin/linux/amd64/kubectl > ${KUBECTL_INSTALL_DIR}/kubectl; fi
+	@if [ ! -f ${KUBECTL_INSTALL_DIR}/kubectl ]; then mkdir -pv ${KUBECTL_INSTALL_DIR} && curl https://storage.googleapis.com/kubernetes-release/release/v1.10.5/bin/linux/amd64/kubectl > ${KUBECTL_INSTALL_DIR}/kubectl; fi
 	@chmod +x ${KUBECTL_INSTALL_DIR}/kubectl
 	@export PATH=${PATH}:${KUBECTL_INSTALL_DIR}
 

@@ -10,6 +10,7 @@ services:
 cache:
   directories:
     - "$HOME/google-cloud-sdk/"
+    - "$HOME/kubectl/"
 
 # Use npm to install any local dependencies. This needs to install the dev
 # dependencies as well because the 'npm run build' step uses them for some

@@ -17,8 +17,9 @@ export BASE64_LINKEDIN_APP_ID := $(shell echo -n ${LINKEDIN_APP_ID} | base64 --w
 # using any prompts.
 export CLOUDSDK_CORE_DISABLE_PROMPTS := 1
 export CLOUDSDK_INSTALL_DIR := ${HOME}/google-cloud-sdk
+export KUBECTL_INSTALL_DIR := ${HOME}/kubectl
 
-CLI_TARGETS := image deploy login push docker-login gcloud-login gcloud-install
+CLI_TARGETS := image deploy login push docker-login gcloud-login gcloud-install kubectl-install
 CI_TARGETS  := install script after_success
 
 
@@ -69,11 +70,16 @@ gcloud-login:
 gcloud-install:
 	@if [ ! -d ${CLOUDSDK_INSTALL_DIR} ]; then curl https://sdk.cloud.google.com | bash; fi
 
+kubectl-install:
+	@if [ ! -d ${KUBECTL_INSTALL_DIR} ]; then mkdir -pv ${KUBECTL_INSTALL_DIR} && curl https://storage.googleapis.com/kubernetes-release/release/v1.10.5/bin/linux/amd64/kubectl > ${KUBECTL_INSTALL_DIR}/kubectl; fi
+	@chmod +x ${KUBECTL_INSTALL_DIR}/kubectl
+	@export PATH=${PATH}:${KUBECTL_INSTALL_DIR}
+
 push:
 	@docker push ${NAME}
 
 # Called by the CI/CD framework to install dependencies
-install:
+install: kubectl-install gcloud-install
 	@npm ci
 
 # Called by the CI/CD framework to perform the build
@@ -82,5 +88,5 @@ script:
 	@npm run build
 
 # Called by the CI/CD framework after 'script' has run successfully
-after_success: gcloud-install image login push deploy
+after_success: image login push deploy
 
